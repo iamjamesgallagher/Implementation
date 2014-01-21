@@ -1,0 +1,19 @@
+ERROR : method render in class test cannot be applied to given types;
+
+declared a params in view (which is function), but didn't pass them
+
+
+##########################################################################
+
+
+ERROR : not showing jquery Lib.
+
+
+HAve 2 differnt versions of jquery in same .HTML FILE ! 
+
+script tag can mistakemly fallen out of the body   Like everybody knows, it needs to be inside the <body> or inside the <head>.
+
+
+When Copying example files from jfiddle make sure you have matching ID'script
+
+###################################################################################

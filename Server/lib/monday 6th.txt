@@ -1,0 +1,39 @@
+
+persistance layer. 
+
+Installed MySQL software : = Unneeded dependecy when readers evaluating the software. 
+
+ebean is an easy to use ORM. 
+
+"Ebean is a Java ORM library that aims to implement a very simple interface to mapping Java objects to the database. It uses JPA annotations for mapping classes to tables, but if you have had experience with JPA before, Ebean differs in that it is sessionless. This can greatly simplify the way you interact with the database, removing many of the surprises of things being done at odd times, such as session flushing, and errors with regards to stale or detached objects that can occur when using JPA"
+
+can Use a database in PLay Frameowrk by uncommenting relevant lines in config/application.config 
+
+Example uses h2 database. 
+where : "It is possible to create both in-memory tables, as well as disk-based tables.""
+
+
+To Create a script to populate a in memory database on start up look in config/evolution.
+
+#doesnt work without internet access to download dependescie ? 
+
+
+TO DO 
+
+Must have :
+
+Uploading  Jar file & displaying web output. ! ! ! ! !
+
+
+Database of stocks for user to search through.
+3/4 algorithms to play with. (input  own test paraneters)
+Junit test cases.
+Auto generated Docs.
+
+Query google finance Api to get stock Data 
+
+ for use with algs ? 
+
+Could have :
+
+Live feed 

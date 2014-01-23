@@ -83,7 +83,7 @@ public class Application extends Controller {
   end.set(Calendar.SECOND,0);
   end.set(Calendar.MILLISECOND,0);
 
-    Stock appl = data("C:\\Users\\JG\\Desktop\\Att\\public\\files\\Test_Data.txt");
+    Stock appl = data("C:\\Users\\User\\Desktop\\Implementation\\Server\\public\\files\\Test_Data.txt");
 
      ArrayList buytime= buyTimes(start, end,30);
 
@@ -127,11 +127,7 @@ public class Application extends Controller {
             );
   }
 
-   public static Result test4() {
-      return ok(
-               test4.render()
-            );
-        }  
+   
 
    public static Result test5() {
       return TODO;
@@ -143,7 +139,9 @@ public class Application extends Controller {
 
    public static Result fileUpload() {
       return ok(
-               fileUpload.render(form(Hello.class))
+
+      		fileUpload.render()
+              //fileUpload.render(form(Hello.class))
             );
   }
 
@@ -178,7 +176,7 @@ public static Result upload() {
     String fileName = picture.getFilename();
     String contentType = picture.getContentType(); 
     File jar = picture.getFile();
-    jar.renameTo(new File("C:\\Users\\JG\\Desktop\\Att\\lib", fileName));
+    jar.renameTo(new File("C:\\Users\\User\\Desktop\\Implementation\\Server\\lib", fileName));
      
     try { JarFile jarFile = new JarFile(jar);    
 
@@ -201,15 +199,13 @@ public static Result upload() {
        Constructor<?> constructorStock = classToLoadStock.getConstructor();                 
       Object stockObject = constructorStock.newInstance();           
 
-    Scanner fileIn = new Scanner(new File("C:\\Users\\JG\\Desktop\\Att\\public\\files\\Test_Data.txt"));
+    Scanner fileIn = new Scanner(new File("C:\\Users\\User\\Desktop\\Implementation\\Server\\public\\files\\Test_Data.txt"));
     fileIn.useDelimiter(",");
     Calendar cal2 = Calendar.getInstance(); cal.set(Calendar.HOUR_OF_DAY,9);cal.set(Calendar.MINUTE,30);
     cal.set(Calendar.SECOND,0); cal.set(Calendar.MILLISECOND,0);
     System.out.println(dateFormat.format(cal.getTime()));
 
     Stock nativeStock = new Stock(" ");
-
-    int count =0;
 
     while (fileIn.hasNextLine() == true){      
       String singleLine = fileIn.nextLine();
@@ -222,15 +218,19 @@ public static Result upload() {
       Method set = stockObject.getClass().getMethod("setTimeandprice", classToLoadTimePoint);
             set.invoke(stockObject, constructorTP.newInstance(cal.getTime(),price,volume,high,open,low,close));   
 
-      TimePoint ts = new TimePoint(cal.getTime(),price);    
-      cal.add(Calendar.MINUTE, 1);
-      nativeStock.setTimeandprice(ts);     count++;
+      Date myDate = cal.getTime();      
+      TimePoint ts = new TimePoint(myDate.getTime() , cal.getTime(),price,volume,high, low,close, open);      
+
+      //TimePoint ts = new TimePoint(cal.getTime(),price);    
+      cal.add(Calendar.MINUTE, 1);      
+
+      nativeStock.setTimeandprice(ts);    
     } 
     
     Calendar start = Calendar.getInstance();    start.set(Calendar.HOUR_OF_DAY,9);
     start.set(Calendar.MINUTE,30);    start.set(Calendar.SECOND,0);
     start.set(Calendar.MILLISECOND,0);        
-    Calendar end = Calendar.getInstance();    end.set(Calendar.HOUR_OF_DAY,9);
+    Calendar end = Calendar.getInstance();    end.set(Calendar.HOUR_OF_DAY,9);             
     end.set(Calendar.MINUTE,38);    end.set(Calendar.SECOND,0);
     end.set(Calendar.MILLISECOND,0);
             
@@ -263,15 +263,9 @@ public static Result upload() {
     
     nativeStock.setPurchase(ts2);       
 
+    System.out.println( nativeStock.getDataArray().get(z).getTime());
+    
     }      
-
-
-
-
-
-
-
-
 
      return ok(
        TWAP.render(nativeStock)
@@ -317,7 +311,7 @@ return ok( " say it aint so . ."//uploadConfirm.render()
     end.set(Calendar.SECOND,0);
     end.set(Calendar.MILLISECOND,0);
 
-    Stock appl = data("C:\\Users\\JG\\Desktop\\Att\\public\\files\\Test_Data.txt");
+    Stock appl = data("C:\\Users\\User\\Desktop\\Implementation\\Server\\public\\files\\Test_Data.txt");
 
     /*ArrayList buytime= buyTimes(start, end,30);*/
 

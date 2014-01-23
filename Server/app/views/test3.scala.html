@@ -1,0 +1,90 @@
+
+@main("Index") {
+
+
+<script src="http://code.highcharts.com/stock/highstock.js"></script>
+<script src="http://code.highcharts.com/stock/modules/exporting.js"></script>
+
+ 
+<h1>Calling data as an embeddded template, & setting markers</h1>
+
+
+        <section class="content">content</section>
+
+
+        <div id="container" style="height: 500px; min-width: 600px"></div>
+
+<img src="@routes.Assets.at("images/city.jpg")" width="280" height="220" />   
+
+
+
+
+
+
+<script> $(function() {
+
+ var data = [ @data()  ];
+ /* var data = [
+        [1318607820000,421.4601,421.71,421.36,421.69],
+        [1318607880000,421.69,421.94,421.663,421.94],
+        [1318607940000,421.94,422,421.8241,422]
+
+    ];
+*/
+    // Create the chart
+    $('#container').highcharts('StockChart', {
+      
+
+      rangeSelector : {
+        selected : 1
+      },
+
+      title : {
+        text : 'USD to EUR exchange rate'
+      },
+      
+      tooltip: {
+        style: {
+          width: '200px'
+        },
+        valueDecimals: 4
+      },
+      
+      yAxis : {
+        title : {
+          text : 'Exchange rate'
+        }
+      },
+
+      series : [{
+        name : 'USD to EUR',
+        data : data,
+        id : 'dataseries'
+      },
+      // the event marker flags
+      {
+        type : 'flags',
+        data : [{
+          x : 1.38685272,
+          title : 'H',
+          text : 'Euro Contained by Channel Resistance'
+        }, {
+          x : 1.38686112,
+          title : 'G',
+          text : 'EURUSD: Bulls Clear Path to 1.50 Figure'
+        }],
+        onSeries : 'dataseries',
+        shape : 'circlepin',
+        width : 16
+      }]
+    });
+  
+});
+
+
+</script>
+
+
+
+
+}

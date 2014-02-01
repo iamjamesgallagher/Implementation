@@ -51,8 +51,16 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.lang.reflect.Constructor;
 
+//db
+import java.util.*;
+import play.mvc.*;
+import play.data.*;
+import static play.data.Form.*;
+import play.data.validation.Constraints.*;
 
+import views.html.*;
 
+import models.*;
 
 
 
@@ -100,30 +108,49 @@ public class Application extends Controller {
 
   public static Result welcome() {
 
-        return ok(
-                test.render()
-            );
+        return TODO;
   
     }
 
 
   public static Result test() {
 
+         dbrow s = dbrow.findById( 1);
+        List<dbrow> s2 = dbrow.findAll();
+
+        ArrayList<dbrow> al = new ArrayList<dbrow>();
+
+        for (int x = 0 ; x < s2.size() ; x++){
+            al.add(s2.get(x));
+        }
+
+        System.out.println( " check table size :  "+s2.size() );
+
+        return ok(           
+            test.render(al )  
+            
+        );
+     
+    }
+
+    public static Result m1() {
+
         return ok(
-                test.render()
+                boot.render()
             );
      
     }
 
-  public static Result test2() {
+ 
+  public static Result home() {
        return ok(
-                test2.render()
+                home.render()
             );
   }    
 
-   public static Result test3() {
+   public static Result code() {
       return ok(
-                test3.render()
+                code.render()
             );
   }
 
@@ -133,9 +160,6 @@ public class Application extends Controller {
       return TODO;
   }  
 
- public static Result m1() {
-  return TODO;
-  }    
 
    public static Result fileUpload() {
       return ok(

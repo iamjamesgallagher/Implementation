@@ -12,9 +12,9 @@ GET     /welcome                         controllers.Application.welcome()
 
 # test
 GET     /test                            controllers.Application.test()
-GET     /test2                           controllers.Application.test2()
-GET     /test3                           controllers.Application.test3()
-GET     /test4                           controllers.Application.test4()
+GET     /home                           controllers.Application.home()
+GET     /code                           controllers.Application.code()
+
 GET     /test5                           controllers.Application.test5()
 GET     /data                            controllers.Application.data()
 

@@ -1,0 +1,113 @@
+<html>
+<head>
+
+@main("Index"){
+
+
+<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script src="http://unslider.com/unslider.min.js"></script>
+
+</head>
+<body>
+<div class="banner">
+    <ul>
+
+       <li>   <img src="@routes.Assets.at("images/TOWERS.jpg")"  />    </li>
+
+       <li>  <img src="@routes.Assets.at("images/BOOK.jpg")"  />  </li>
+
+       <li>  <img src="@routes.Assets.at("images/BOARD.jpg")"  />    </li>
+
+        <li>  <img src="@routes.Assets.at("images/GRAPH.jpg")"  />    </li>
+
+       
+
+       <li>  <img src="@routes.Assets.at("images/CODE.jpg")"  />    </li>
+
+       <li>  <img src="@routes.Assets.at("images/SKYLINE.jpg")"  />    </li>
+
+        
+    </ul>
+</div>
+
+
+<div id="service">
+        
+
+<div> <i class="fa fa-bar-chart-o fa-4x" id = "menu"></i> <h3>Menu</h3>  <p>cddcdcsdcsdcc</p> <p><a href="#" class="readmore">read more</a></p>
+  </div>
+<div> <i class="fa fa-book fa-4x" id = "tut"></i> <h3>Tutorial</h3> <p>cddcdcsdcsdcc</p> <p><a href="#" class="readmore">read more</a></p>
+</div>
+<div><i class="fa fa-desktop fa-4x" id = "code"></i> <h3>Code</h3> <p>cddcdcsdcsdcc</p> <p><a href="#" class="readmore">read more</a></p>
+ </div>
+
+</div>
+
+</div>
+
+
+</body>
+
+<style>
+.banner { position: relative; overflow: auto; }
+    .banner li { list-style: none; }
+        .banner ul li { float: left; }
+
+.banner {
+  width: 1380 ;
+  margin-left: auto ;
+  margin-right: auto ;
+}
+
+
+#service{
+    margin: 40px auto;
+    height: 253px;
+    padding-top: 30px;    
+}
+
+
+#menu{
+    padding-left:300px;
+    width: 302px;
+    padding-top: 20px;
+    float: left;
+    margin-right: 58px; }
+
+#tut{
+    padding-left:460px; 
+    width: 302px;
+    padding-top: 20px;
+    float: left;
+    margin-right: 58px; }
+
+#code{
+    padding-left:460px;
+    width: 302px;
+    padding-top: 20px;
+    float: left;
+    margin-right: 58px; }
+
+
+
+</style>
+
+
+
+
+<script>
+$(function() {
+    $('.banner').unslider({
+  speed: 500,               //  The speed to animate each slide (in milliseconds)
+  delay: 5000,              //  The delay between slide animations (in milliseconds)
+  complete: function() {},  //  A function that gets called after every slide animation
+  keys: true,               //  Enable keyboard (left, right) arrow shortcuts
+  dots: true,               //  Display dot navigation
+  fluid: false              //  Support responsive design. May break non-responsive designs
+});
+});
+</script>
+
+
+}

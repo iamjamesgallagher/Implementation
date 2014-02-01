@@ -1,0 +1,117 @@
+
+
+
+
+<script src="http://code.highcharts.com/stock/highstock.js"></script>
+<script src="http://code.highcharts.com/stock/modules/exporting.js"></script>
+
+ 
+<style type="text/css" media="screen">
+    body {
+        overflow: hidden;
+    }
+    
+    #editor { 
+        margin: 0;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+  </style>
+
+
+       
+
+
+
+<pre id="editor">package models;
+
+import java.util.ArrayList;
+
+
+public class Stock {
+
+  private String name;
+  
+  private ArrayList<TimePoint> timeandprice;
+
+  private ArrayList<TimePoint> purchased;
+    
+  public Stock(String s ){
+    this.name = s;
+    this.timeandprice = new ArrayList<TimePoint>();
+    this.purchased = new ArrayList<TimePoint>();
+    
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public ArrayList<TimePoint> getDataArray() {
+    return this.timeandprice;
+  }
+  
+  public TimePoint getDataPoint(int n) {
+    return this.timeandprice.get(n);
+  }
+  
+  public int DataLength() {
+    return timeandprice.size();
+  }
+
+  public void setTimeandprice(TimePoint t) {
+    this.timeandprice.add(t);
+  }
+
+
+
+  public ArrayList<TimePoint> getPurchaseArray() {
+    return this.purchased;
+  }
+  
+  public TimePoint getPurchasePoint(int n) {
+    return this.purchased.get(n);
+  }
+  
+  public int PurchaseLength() {
+    return purchased.size();
+  }
+
+  public void setPurchase(TimePoint t) {
+    this.purchased.add(t);
+  }
+  
+
+  public double getOpen() {
+    return this.timeandprice.get(0).getprice();
+  }
+  
+  
+  public String toString(){
+    return "Stock" +":" + this.name  ;
+    
+  }
+  
+  
+}
+
+</pre>
+
+
+
+
+<script src="@routes.Assets.at("javascripts/src/ace.js")"
+
+ type="text/javascript" charset="utf-8"></script>
+<script>
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/twilight");
+    editor.getSession().setMode("ace/mode/java");
+</script>
+
+
+
+

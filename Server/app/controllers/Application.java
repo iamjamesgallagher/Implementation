@@ -62,24 +62,228 @@ import views.html.*;
 
 import models.*;
 
-
-
-
-
-
-
-/**
- * The controller for the single page of this application.
- *
- * @author Philip Johnson
- */
 public class Application extends Controller {
 
- 
+  public static class Hello {
+        @Required public  Integer startHour;
+        @Required public Integer startMin;
+         @Required public  Integer endHour;
+         @Required public  Integer  endMin;
+         @Required public  Integer amount;
+        @Required  public Integer period;
+    } 
+
+       public static Result sayHello() {
+
+        Stock appl = data("C:\\Users\\User\\Desktop\\Implementation\\Server\\public\\files\\Test_Data.txt");
+          Form<Hello> form = form(Hello.class).bindFromRequest();
+        
+
+        
+
+        if(form.hasErrors()) {
+
+          System.out.println("message : "+form.errors());
+
+          return  TODO ; /*TWAPupload.render(  TWAPFunc(  appl,start, end,data.amount, data.period )     );*/
+
+        } else {
+
+          Hello data = form.get();
+
+            
+
+         Calendar start = Calendar.getInstance();
+              start.set(Calendar.HOUR_OF_DAY,data.startHour);
+              start.set(Calendar.MINUTE,data.startMin);
+              start.set(Calendar.SECOND,0);
+              start.set(Calendar.MILLISECOND,0);        
+
+              
+              Calendar end = Calendar.getInstance();
+
+              int hour ;
+              if (data.endHour < 12){ 
+                hour= (data.endHour +12);
+              } else {hour =data.endHour;}
+
+              end.set(Calendar.HOUR_OF_DAY,hour );
+              end.set(Calendar.MINUTE,data.endMin);
+              end.set(Calendar.SECOND,0);
+              end.set(Calendar.MILLISECOND,0);
+          
+            return ok(
+              
+                TWAP.render(  TWAPFunc(  appl,start, end,data.amount, data.period )  , form(Hello.class)    )
+            );
+
+        }      //else
+
+
+            
+        }
+        
+
+       /* public static Result sayHello() {
+            return TODO ;}*/
+
+
+
+  public static Result TWAP() {
+    Calendar start = Calendar.getInstance();
+    start.set(Calendar.HOUR_OF_DAY,10);
+    start.set(Calendar.MINUTE,30);
+    start.set(Calendar.SECOND,0);
+    start.set(Calendar.MILLISECOND,0);        
+    Calendar end = Calendar.getInstance();
+    end.set(Calendar.HOUR_OF_DAY,14);
+    end.set(Calendar.MINUTE,30);
+    end.set(Calendar.SECOND,0);
+    end.set(Calendar.MILLISECOND,0);
+
+    Stock appl = data("C:\\Users\\User\\Desktop\\Implementation\\Server\\public\\files\\Test_Data.txt");
+
+    /*ArrayList buytime= buyTimes(start, end,30);*/
+
+    return ok(
+       TWAPnodatapoints.render(TWAPFunc(appl, start, end,800, 30), form(Hello.class))
+    );
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public static Stock data(String f) {
+    Stock appl = null;
+
+    try {
+      Scanner fileIn = new Scanner(new File(f));
+      fileIn.useDelimiter(",");  DateFormat dateFormat = new SimpleDateFormat("HH:mm");
+      Calendar cal = Calendar.getInstance(); cal.set(Calendar.HOUR_OF_DAY,9); 
+      cal.set(Calendar.MINUTE,30); cal.set(Calendar.SECOND,0); 
+      cal.set(Calendar.MILLISECOND,0);    
+      /*   System.out.println(dateFormat.format(cal.getTime()));*/
+
+      appl = new Stock("Appl");
+
+      while (fileIn.hasNextLine() == true){            
+      //COLUMNS=DATE,CLOSE,HIGH,LOW,OPEN,VOLUME System.out.println(fileIn.nextLine());      
+        String singleLine = fileIn.nextLine();     String[] lineArray = singleLine.split(",");
+        Float price = Float.parseFloat(lineArray[2]);  Float volume = Float.parseFloat(lineArray[5]);      
+        Float high = Float.parseFloat(lineArray[2]);  Float open = Float.parseFloat(lineArray[4]);
+        Float low = Float.parseFloat(lineArray[3]);  Float close = Float.parseFloat(lineArray[1]);
+
+        Date myDate = cal.getTime();  
+        TimePoint ts = new TimePoint(myDate.getTime() , cal.getTime(),price,volume,high, low,close, open); 
+        cal.add(Calendar.MINUTE, 1);
+        appl.setTimeandprice(ts);     
+
+        /*System.out.println( myDate.getTime());*/      
+      } 
+
+    } catch (FileNotFoundException e) {
+    // TODO Auto-generated catch block
+      e.printStackTrace();  }
+
+      return appl;
+
+    } 
+
+
+
+
+
+ public static Stock TWAPFunc(Stock s, Calendar start, Calendar end, int amount, int period){
+    DateFormat dateFormat = new SimpleDateFormat("HH:mm");
+    double totalCost = 0;
+    double totalBought = 0;
+
+    ArrayList buytime = buyTimes(start, end, period);
+
+    double numberOfOrders = buytime.size() ;
+    //    
+    double indivOrderSizeDec = amount/numberOfOrders;     
+    int indivOrderSize = (int)indivOrderSizeDec;
+
+    for (int x = 0 ; x < s.DataLength(); x++){
+      Date testd = s.getDataPoint(x).getTime(); /*System.out.println(s.getDataPoint(x).getTime());*/
+
+      if (buytime.isEmpty()==false){
+        Date buyDate = (Date) buytime.get(0);/*System.out.println(s.getDataPoint(x).getTime());*/
+
+        if( testd.equals(buyDate) ){          
+          if (buytime.size() ==1){
+            indivOrderSize = (int) (amount - totalBought);}     
+          
+          TimePoint marker = new TimePoint(); 
+          marker.setTime(testd);
+          marker.setprice(s.getDataPoint(x).getprice());
+          
+          s.setPurchase(marker);
+          
+          System.out.println( "Purchased :"+indivOrderSize +", at "+dateFormat.format(testd)+ ", for " +s.getDataPoint(x).getprice());    
+          System.out.println( " ");       
+
+          totalCost += ( indivOrderSize*s.getDataPoint(x).getprice());         
+          totalBought += indivOrderSize;
+
+          buytime.remove(buyDate);
+        }
+      }
+    }
+    System.out.println( "Purchased a total of  :"+totalBought + " for $" +totalCost);
+    System.out.println( "To aquire from a one of purchase, it would have cost : $" + (s.getDataPoint(0).getprice()*totalBought));
+    
+    if ( totalCost < s.getDataPoint(0).getprice()*totalBought)
+      System.out.println("you saved : "+ (totalCost - s.getDataPoint(0).getprice()*totalBought) );
+    else 
+      System.out.println("you lost using the alg : "+ (totalCost - s.getDataPoint(0).getprice()*totalBought));
+      
+    return s;
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
   public static Result VWAP() {
-
     Calendar start = Calendar.getInstance();
   start.set(Calendar.HOUR_OF_DAY,9);
   start.set(Calendar.MINUTE,30);
@@ -92,103 +296,38 @@ public class Application extends Controller {
   end.set(Calendar.MILLISECOND,0);
 
     Stock appl = data("C:\\Users\\User\\Desktop\\Implementation\\Server\\public\\files\\Test_Data.txt");
-
      ArrayList buytime= buyTimes(start, end,30);
-
     return ok(
-
      VWAP.render(VWAPFunc(appl, start, end))
      );
-
     }
 
 
 
-
-
-  public static Result welcome() {
-
-        return TODO;
-  
-    }
-
-
-  public static Result test() {
-
+  public static Result database() {
          dbrow s = dbrow.findById( 1);
         List<dbrow> s2 = dbrow.findAll();
-
         ArrayList<dbrow> al = new ArrayList<dbrow>();
-
         for (int x = 0 ; x < s2.size() ; x++){
             al.add(s2.get(x));
         }
-
         System.out.println( " check table size :  "+s2.size() );
+        return ok(          database.render(al )     );    }
 
-        return ok(           
-            test.render(al )  
-            
-        );
-     
-    }
-
-    public static Result m1() {
-
-        return ok(
-                boot.render()
-            );
-     
-    }
-
+    public static Result home() {
+        return ok(boot.render() );} 
  
-  public static Result home() {
-       return ok(
-                home.render()
-            );
-  }    
+  public static Result menu() {
+       return ok(                menu.render()            );  }    
+
+   public static Result menu2(String s) {
+       return ok(                menu.render()            );  } 
 
    public static Result code() {
-      return ok(
-                code.render()
-            );
-  }
-
-   
-
-   public static Result test5() {
-      return TODO;
-  }  
-
-
+      return ok(                code.render()            );  }
+ 
    public static Result fileUpload() {
-      return ok(
-
-      		fileUpload.render()
-              //fileUpload.render(form(Hello.class))
-            );
-  }
-
-
-
-   public static Result m3() {
-      return ok(
-
-        //pass forum class- - - - - -V 
-        //to named V- - .scala file 
-            forumTest.render(form(Hello.class))
-        );
-        }  
-
-
- public static class Hello {
-        @Required public String name;
-        @Required @Min(1) @Max(100) public Integer repeat;
-        public String color;
-    } 
-
-
-
+      return ok(      		fileUpload.render()           );  }
 
 
 public static Result upload() {
@@ -292,7 +431,7 @@ public static Result upload() {
     }      
 
      return ok(
-       TWAP.render(nativeStock)
+       TWAPupload.render(nativeStock)
     );
 
 
@@ -309,127 +448,6 @@ return ok( " say it aint so . ."//uploadConfirm.render()
 
 }
 
-
-
-
-
-
-
-
-    public static Result sayHello() {
-        return TODO;
-        
-    }
-
-
-
-  public static Result TWAP() {
-    Calendar start = Calendar.getInstance();
-    start.set(Calendar.HOUR_OF_DAY,10);
-    start.set(Calendar.MINUTE,30);
-    start.set(Calendar.SECOND,0);
-    start.set(Calendar.MILLISECOND,0);        
-    Calendar end = Calendar.getInstance();
-    end.set(Calendar.HOUR_OF_DAY,14);
-    end.set(Calendar.MINUTE,30);
-    end.set(Calendar.SECOND,0);
-    end.set(Calendar.MILLISECOND,0);
-
-    Stock appl = data("C:\\Users\\User\\Desktop\\Implementation\\Server\\public\\files\\Test_Data.txt");
-
-    /*ArrayList buytime= buyTimes(start, end,30);*/
-
-    return ok(
-       TWAP.render(TWAPFunc(appl, start, end,800, 30))
-    );
-
-    }
-
-
-  public static Stock data(String f) {
-    Stock appl = null;
-
-    try {
-      Scanner fileIn = new Scanner(new File(f));
-      fileIn.useDelimiter(",");  DateFormat dateFormat = new SimpleDateFormat("HH:mm");
-      Calendar cal = Calendar.getInstance(); cal.set(Calendar.HOUR_OF_DAY,9); 
-      cal.set(Calendar.MINUTE,30); cal.set(Calendar.SECOND,0); 
-      cal.set(Calendar.MILLISECOND,0);    
-      /*   System.out.println(dateFormat.format(cal.getTime()));*/
-
-      appl = new Stock("Appl");
-
-      while (fileIn.hasNextLine() == true){            
-      //COLUMNS=DATE,CLOSE,HIGH,LOW,OPEN,VOLUME System.out.println(fileIn.nextLine());      
-        String singleLine = fileIn.nextLine();     String[] lineArray = singleLine.split(",");
-        Float price = Float.parseFloat(lineArray[2]);  Float volume = Float.parseFloat(lineArray[5]);      
-        Float high = Float.parseFloat(lineArray[2]);  Float open = Float.parseFloat(lineArray[4]);
-        Float low = Float.parseFloat(lineArray[3]);  Float close = Float.parseFloat(lineArray[1]);
-
-        Date myDate = cal.getTime();  
-        TimePoint ts = new TimePoint(myDate.getTime() , cal.getTime(),price,volume,high, low,close, open); 
-        cal.add(Calendar.MINUTE, 1);
-        appl.setTimeandprice(ts);     
-
-        /*System.out.println( myDate.getTime());*/      
-      } 
-
-    } catch (FileNotFoundException e) {
-    // TODO Auto-generated catch block
-      e.printStackTrace();  }
-
-      return appl;
-
-    } 
-
- public static Stock TWAPFunc(Stock s, Calendar start, Calendar end, int amount, int period){
-    DateFormat dateFormat = new SimpleDateFormat("HH:mm");
-    double totalCost = 0;
-    double totalBought = 0;
-
-    ArrayList buytime = buyTimes(start, end, period);
-
-    double numberOfOrders = buytime.size() ;
-    //    
-    double indivOrderSizeDec = amount/numberOfOrders;     
-    int indivOrderSize = (int)indivOrderSizeDec;
-
-    for (int x = 0 ; x < s.DataLength(); x++){
-      Date testd = s.getDataPoint(x).getTime(); /*System.out.println(s.getDataPoint(x).getTime());*/
-
-      if (buytime.isEmpty()==false){
-        Date buyDate = (Date) buytime.get(0);/*System.out.println(s.getDataPoint(x).getTime());*/
-
-        if( testd.equals(buyDate) ){          
-          if (buytime.size() ==1){
-            indivOrderSize = (int) (amount - totalBought);}     
-          
-          TimePoint marker = new TimePoint(); 
-          marker.setTime(testd);
-          marker.setprice(s.getDataPoint(x).getprice());
-          
-          s.setPurchase(marker);
-          
-          System.out.println( "Purchased :"+indivOrderSize +", at "+dateFormat.format(testd)+ ", for " +s.getDataPoint(x).getprice());    
-          System.out.println( " ");       
-
-          totalCost += ( indivOrderSize*s.getDataPoint(x).getprice());         
-          totalBought += indivOrderSize;
-
-          buytime.remove(buyDate);
-        }
-      }
-    }
-    System.out.println( "Purchased a total of  :"+totalBought + " for $" +totalCost);
-    System.out.println( "To aquire from a one of purchase, it would have cost : $" + (s.getDataPoint(0).getprice()*totalBought));
-    
-    if ( totalCost < s.getDataPoint(0).getprice()*totalBought)
-      System.out.println("you saved : "+ (totalCost - s.getDataPoint(0).getprice()*totalBought) );
-    else 
-      System.out.println("you lost using the alg : "+ (totalCost - s.getDataPoint(0).getprice()*totalBought));
-      
-    return s;
-  }
 
 public static Stock VWAPFunc(Stock s, Calendar start, Calendar end){
 

@@ -1,4 +1,6 @@
-@(Stock: Stock)
+@(Stock: Stock, helloForm: Form[Application.Hello])
+
+@import helper._
 
 
 @main("Index") {
@@ -7,18 +9,70 @@
 <script src="http://code.highcharts.com/stock/highstock.js"></script>
 <script src="http://code.highcharts.com/stock/modules/exporting.js"></script>
 
+<section>
+
+<h2>Time Weighted Average Price Algorithm . </h2>  
+
+</section>
+
+ <section class="content">
 
 
-<h1>Title of page</h1>
 
- 
-        <section class="content">content</section>
+<p>The Time Weighted Average Price Algorithm is a natural extension of early order-slicing based trading strategies. By splitting larger orders into smaller, multiple child orders, traders try and reduce the effect that buying a stock will have on the stocks price.</p>
 
+ Remember :  <p> Buying a large quantity of one stock will increase the demand it , and subsequently push up the price. </p>
+
+<p> The average price based algorithm , namely TWAP and VWAP represent the first generation of impact-driven algorithms. These algorithms are 
+schedule based algorithms. They do not respond to changes in stock they are monitorings price or volume . There aim is to completely execute the order within the given timeframe, acoring to the parameters they are given , irrespective of other market conditions</p>
+
+
+
+
+
+
+
+ </section>
 
         <div id="container" style="height: 500px; min-width: 600px"></div>
 
-<img src="@routes.Assets.at("images/city.jpg")" width="280" height="220" />   
 
+
+
+<section>
+
+
+
+<div>
+
+
+
+<h2>Results. </h2>  
+
+<h3> Purchase price if aquired on a one of purchase : </h3>  
+
+<h3> Purchase price using TWAP Algorithm  : </h3>  
+
+
+<p> The average price based algorithm , namely TWAP and VWAP represent the first generation of impact-driven algorithms. These algorithms are 
+schedule based algorithms. They do not respond to changes in stock they are monitorings price or volume . There aim is to completely execute the order within the given timeframe, acoring to the parameters they are given , irrespective of other market conditions</p>
+
+
+</div>
+
+</section>
+
+
+
+<section>
+ 
+
+<p> results  pododscnosjdncosdcnslnciosdn' </p>
+
+
+ 
+        
+</section>
 
 
 
@@ -78,6 +132,19 @@ $(function () {
 });
 
 </script>
+
+
+<style type="text/css">
+
+
+
+
+</style>>
+
+
+
+
+
 
 
 

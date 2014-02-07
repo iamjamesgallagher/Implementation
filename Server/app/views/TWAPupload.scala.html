@@ -1,0 +1,89 @@
+@(Stock: Stock)
+
+
+
+
+@main("Index") {
+
+
+<script src="http://code.highcharts.com/stock/highstock.js"></script>
+<script src="http://code.highcharts.com/stock/modules/exporting.js"></script>
+
+
+
+<h1>Title of page</h1>
+
+
+
+ 
+        <section class="content">content</section>
+
+
+        <div id="container" style="height: 500px; min-width: 600px"></div>
+
+<img src="@routes.Assets.at("images/city.jpg")" width="280" height="220" />   
+
+
+
+
+<script> 
+
+$(function () {
+
+  /*  var arClosingData = [
+        [Date.UTC(2013, 2, 1), 3.23],
+        [Date.UTC(2013, 2, 2), 3.28],
+        [Date.UTC(2013, 2, 3), 3.56],
+        [Date.UTC(2013, 2, 4), 3.90],
+        [Date.UTC(2013, 2, 5), 3.23]
+    ];*/
+
+
+   var arClosingData = [ @dataLoop(Stock)
+
+    ];
+
+
+    $('#container').highcharts('StockChart', {
+
+        rangeSelector: {
+            selected: 1
+        },
+
+        title: {
+            text: 'Test Stock Price'
+        },
+
+        series: [{
+            name: 'Test',
+            data: arClosingData,
+            id : 'dataseries',
+            tooltip: {
+                valueDecimals: 2
+            }
+        },
+
+
+
+         { type : 'flags',
+           data : [ 
+           @DP(Stock)
+           
+
+        ],
+        onSeries : 'dataseries',
+        shape : 'circlepin',
+        width : 16
+      }
+
+
+        ]
+    });
+});
+
+</script>
+
+
+
+
+}

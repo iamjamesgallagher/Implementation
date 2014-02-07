@@ -11,7 +11,19 @@
         overflow: hidden;
     }
     
-    #editor { 
+    
+
+
+
+.container { 
+    width: 1380px; /* pick whatever width you want */
+}
+.container .child {
+    width: 60%;
+    padding-top: 75%;
+}
+
+#editor { 
         margin: 0;
         position: absolute;
         top: 0;
@@ -19,14 +31,16 @@
         left: 0;
         right: 0;
     }
+
+
   </style>
 
 
        
+<div  class="container" >
 
 
-
-<pre id="editor">package models;
+<pre id="editor"   >package models;
 
 import java.util.ArrayList;
 
@@ -100,7 +114,7 @@ public class Stock {
 
 </pre>
 
-
+</div>
 
 
 <script src="@routes.Assets.at("javascripts/src/ace.js")"
@@ -111,7 +125,5 @@ public class Stock {
     editor.setTheme("ace/theme/twilight");
     editor.getSession().setMode("ace/mode/java");
 </script>
-
-
 
 

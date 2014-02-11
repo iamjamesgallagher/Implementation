@@ -109,6 +109,65 @@ public class Stock {
     
   }
   
+
+
+  public Stock VisitorAlgorithm ( Calendar start, Calendar end, int amount, int period){
+       DateFormat dateFormat = new SimpleDateFormat("HH:mm");
+       double totalCost = 0;
+       double totalBought = 0;
+
+       ArrayList buytime = buyTimes(start, end, period);
+
+       double numberOfOrders = buytime.size() ;
+       //    
+       double indivOrderSizeDec = amount/numberOfOrders;     
+       int indivOrderSize = (int)indivOrderSizeDec;
+
+       for (int x = 0 ; x < this.DataLength(); x++){
+         Date testd = this.getDataPoint(x).getTime(); /*System.out.println(s.getDataPoint(x).getTime());*/
+
+         if (buytime.isEmpty()==false){
+           Date buyDate = (Date) buytime.get(0);/*System.out.println(s.getDataPoint(x).getTime());*/
+
+           if( testd.equals(buyDate) ){          
+             if (buytime.size() ==1){
+               indivOrderSize = (int) (amount - totalBought);}     
+             
+             TimePoint marker = new TimePoint(); 
+             marker.setTime(testd);
+             marker.setprice(this.getDataPoint(x).getprice());
+             
+             this.setPurchase(marker);
+             
+             System.out.println( "Purchased :"+indivOrderSize +", at "+dateFormat.format(testd)+ ", for " +this.getDataPoint(x).getprice());    
+             System.out.println( " ");       
+
+             totalCost += ( indivOrderSize* this.getDataPoint(x).getprice());         
+             totalBought += indivOrderSize;
+
+             buytime.remove(buyDate);
+           }
+         }
+       }
+       System.out.println( "Purchased a total of  :"+totalBought + " for $" +totalCost);
+       System.out.println( "To aquire from a one of purchase, it would have cost : $" + (this.getDataPoint(0).getprice()*totalBought));
+       
+       if ( totalCost < this.getDataPoint(0).getprice()*totalBought)
+         System.out.println("you saved : "+ (totalCost - this.getDataPoint(0).getprice()*totalBought) );
+       else 
+         System.out.println("you lost using the alg : "+ (totalCost - this.getDataPoint(0).getprice()*totalBought));
+         
+       return this;
+     }
+  
+  
+  
+
+
+
+
+
+  
   
 }
 

@@ -1,4 +1,4 @@
-@(Stock: Stock, helloForm: Form[Application.Hello])
+@(Stock: Stock, POVForum: Form[Application.POVClass])
 
 @import helper._
 
@@ -11,7 +11,7 @@
 
 <section>
 
-<h1>Time Weighted Average Price Algorithm . </h1>  
+<h1>Percentage of Volume Algorithm . </h1>  
 
 </section>
 
@@ -40,6 +40,7 @@ schedule based algorithms. They do not respond to changes in stock they are moni
 
 
 
+
 <section>
 
 
@@ -63,49 +64,32 @@ schedule based algorithms. They do not respond to changes in stock they are moni
 
 
 <section>
- @form(action = routes.Application.sayHello, args = 'id -> "helloform") {
+ @form(action = routes.Application.POVResults, args = 'id -> "POVForum") {
         
         @inputText(
-            field = helloForm("startHour"),
+            field = POVForum("startHour"),
             args = '_label -> "Start Time Hour?", 'placeholder -> "2"
         )
         
         @inputText(
-            field = helloForm("startMin"),
+            field = POVForum("startMin"),
             args = '_label -> "Start Time Min?", 'size -> 3, 'placeholder -> 10
         )
 
-           @inputText(
-            field = helloForm("endHour"),
-            args = '_label -> "End Time Hour?", 'placeholder -> "9"
-        )
-        
+          
         @inputText(
-            field = helloForm("endMin"),
-            args = '_label -> "End Time Min?", 'size -> 3, 'placeholder -> 10
+            field = POVForum("volume"),
+            args = '_label -> "Volume benchmark to track : ", 'size -> 3, 'placeholder -> 10
         )
 
+
          @inputText(
-            field = helloForm("amount"),
+            field = POVForum("amount"),
             args = '_label -> "Amount of shares to purchase?", 'size -> 3, 'placeholder -> 10
         )
 
-         @inputText(
-            field = helloForm("period"),
-            args = '_label -> "Purchase every ? Mins", 'size -> 3, 'placeholder -> 10
-        )
         
-       <!--  @select(
-            field = helloForm("period"), 
-            options = options(
-                "" -> "60",
-                "red" -> "45",
-                "green" -> "30",
-                "blue" -> "15"
-            ),
-            args = '_label -> "Purhcase every ? Mins"
-        ) -->
-        
+       
         <p class="buttons">
             <input type="submit">
         <p>
@@ -114,7 +98,6 @@ schedule based algorithms. They do not respond to changes in stock they are moni
  
         
 </section>
-
 
 
 
@@ -184,6 +167,9 @@ $(function () {
 });
 
 </script>
+
+
+
 
 
 

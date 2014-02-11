@@ -1,0 +1,9 @@
+@(Stock: models.Stock )    
+
+@for(p <- Stock.getPurchaseArray) {
+   @p.getvolume,
+} 
+
+        
+
+   

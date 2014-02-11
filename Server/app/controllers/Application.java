@@ -62,6 +62,12 @@ import views.html.*;
 
 import models.*;
 
+import java.text.DecimalFormat; //2 decimals places doubles
+
+
+
+
+
 public class Application extends Controller {
 
   public static class Hello {
@@ -73,33 +79,29 @@ public class Application extends Controller {
         @Required  public Integer period;
     } 
 
-       public static Result sayHello() {
+      public static class POVClass {
+        @Required public  Integer startHour;
+        @Required public Integer startMin;
+         @Required public  Integer endHour;
+         @Required public  Integer  endMin;
+         @Required public  Integer  volume;
+         @Required public  Integer amount;
+       
+    } 
 
+       public static Result sayHello() {
         Stock appl = data("C:\\Users\\User\\Desktop\\Implementation\\Server\\public\\files\\Test_Data.txt");
           Form<Hello> form = form(Hello.class).bindFromRequest();
-        
-
-        
-
         if(form.hasErrors()) {
-
           System.out.println("message : "+form.errors());
-
           return  TODO ; /*TWAPupload.render(  TWAPFunc(  appl,start, end,data.amount, data.period )     );*/
-
         } else {
-
           Hello data = form.get();
-
-            
-
          Calendar start = Calendar.getInstance();
               start.set(Calendar.HOUR_OF_DAY,data.startHour);
               start.set(Calendar.MINUTE,data.startMin);
               start.set(Calendar.SECOND,0);
               start.set(Calendar.MILLISECOND,0);        
-
-              
               Calendar end = Calendar.getInstance();
 
               int hour ;
@@ -111,21 +113,64 @@ public class Application extends Controller {
               end.set(Calendar.MINUTE,data.endMin);
               end.set(Calendar.SECOND,0);
               end.set(Calendar.MILLISECOND,0);
-          
+
+              //comparison
+              Stock operator = TWAPFunc(  appl,start, end,data.amount, data.period ) ;
+              double single = ( operator.getPurchaseArray().get(0).getprice() *data.amount ) ;
+
+              double multi = 0;
+              for ( int q = 0 ; q < operator.getPurchaseArray().size() ; q ++ ){
+                /* multi += */ System.out.println( "check mult "+ operator.getPurchaseArray().get(q).getValuePurchased()     );
+                multi += operator.getPurchaseArray().get(q).getValuePurchased();
+                 }
+
+          /*DecimalFormat df = new DecimalFormat("####0.00");
+          double d1 = df.format(multi) ;
+          double d2 = df.format(single) ;*/
             return ok(
               
-                TWAP.render(  TWAPFunc(  appl,start, end,data.amount, data.period )  , form(Hello.class)    )
+                TWAP.render(  operator , form(Hello.class) , multi , single  )
             );
-
         }      //else
+}
 
 
-            
-        }
-        
+       public static Result POVResults() {
+        Stock appl = data("C:\\Users\\User\\Desktop\\Implementation\\Server\\public\\files\\Test_Data.txt");
+          Form<POVClass> form = form(POVClass.class).bindFromRequest();
+        if(form.hasErrors()) {
+          System.out.println("message : "+form.errors());
+          return  TODO ; 
+        } else {
+          POVClass data = form.get();
+         Calendar start = Calendar.getInstance();
+              start.set(Calendar.HOUR_OF_DAY,data.startHour);
+              start.set(Calendar.MINUTE,data.startMin);
+              start.set(Calendar.SECOND,0);
+              start.set(Calendar.MILLISECOND,0);        
+              Calendar end = Calendar.getInstance();
 
-       /* public static Result sayHello() {
-            return TODO ;}*/
+              int hour ;
+              if (data.endHour < 12){ 
+                hour= (data.endHour +12);
+              } else {hour =data.endHour;}
+
+              end.set(Calendar.HOUR_OF_DAY,hour );
+              end.set(Calendar.MINUTE,data.endMin);
+              end.set(Calendar.SECOND,0);
+              end.set(Calendar.MILLISECOND,0);
+              int i = data.volume ;
+             
+              
+          
+            return ok(
+                  //Stock s, Calendar start, int amount, int volume, int period){
+                POVResults.render(  POVFunc(  appl,start,data.amount, data.volume )  , form(POVClass.class) ,  i  )
+            );
+        }      //else
+}
+
+
 
 
 
@@ -153,11 +198,100 @@ public class Application extends Controller {
 
 
 
+  //completes as soon as market volume allows
+  public static Stock POVFunc(Stock s, Calendar start, int amount, int volume){
+    int period =1;
+    double totalCost = 0;
+    double totalBought = 0;
+    DateFormat dateFormat = new SimpleDateFormat("HH:mm");
+    
+    ArrayList buytime = buyTimes(start, period); 
+    for (int y = 0 ; y < (buytime.size()-1); y++){
+
+
+      Calendar c1 = new GregorianCalendar();c1.setTime((Date)buytime.get(y));     Calendar c2  = new GregorianCalendar();c2.setTime((Date)buytime.get(y+1));
+
+      Date d = (Date)buytime.get(y);
+      double db = getVolAtDateD(d,s);
+      int periodVolume = (int)db;
+      int purchaseForPeriod = (periodVolume/100)* volume;
+      double price = getPriceAtDateD(d,s);
+
+      if ((totalBought+purchaseForPeriod) < amount ){
+      totalBought+=purchaseForPeriod;
+      totalCost += (price * purchaseForPeriod);
+
+          TimePoint marker = new TimePoint(); ///////////////////////////////////////////////////////
+          marker.setMilTime(d.getTime() );
+          marker.setprice(price);
+          marker.setAmountPurchased( purchaseForPeriod );
+          marker.setValuePurchased( ( purchaseForPeriod* periodVolume) );
+          marker.setvolume( periodVolume);
+          s.setPurchase(marker);
+
+      System.out.println( "Purchased :"+purchaseForPeriod +", at "+buytime.get(y)+ ", for " +s.getDataPoint(y).getprice());   
+      System.out.println( " "); 
+
+      }
+      else {
+        if ( (totalBought +purchaseForPeriod >  amount) &&  (totalBought != amount ) ) {
+
+          System.out.println( "LAST ITTERATION  :TOTAL BOUGHT =" + totalBought+ "AMOUNT LEFT TO BUY" + purchaseForPeriod );
+
+        
+        purchaseForPeriod= (int) (amount - totalBought);
+        totalBought+=purchaseForPeriod;
+        totalCost += (price * purchaseForPeriod);
+
+
+          TimePoint marker = new TimePoint(); ///////////////////////////////////////////////////////
+          marker.setMilTime(d.getTime() );
+          marker.setprice(price);
+          marker.setAmountPurchased( purchaseForPeriod );
+          marker.setValuePurchased( ( purchaseForPeriod* periodVolume) );
+          marker.setvolume( periodVolume);
+          s.setPurchase(marker);
+
+        
+        System.out.println( "Purchased :"+purchaseForPeriod +", at "+buytime.get(y)+ ", for " +s.getDataPoint(y).getprice());   
+        System.out.println( " "); 
+        }
+      }
+    } 
+
+    //return stock
+    return s;
+    
+} 
 
 
 
 
 
+
+  public static Result POV() {
+    Calendar start = Calendar.getInstance();
+    start.set(Calendar.HOUR_OF_DAY,10);
+    start.set(Calendar.MINUTE,30);
+    start.set(Calendar.SECOND,0);
+    start.set(Calendar.MILLISECOND,0);        
+    Calendar end = Calendar.getInstance();
+    end.set(Calendar.HOUR_OF_DAY,14);
+    end.set(Calendar.MINUTE,30);
+    end.set(Calendar.SECOND,0);
+    end.set(Calendar.MILLISECOND,0);
+
+    Stock appl = data("C:\\Users\\User\\Desktop\\Implementation\\Server\\public\\files\\Test_Data.txt");
+
+    /*ArrayList buytime= buyTimes(start, end,30);*/
+
+    return ok(
+
+      // POVFunc(Stock s, Calendar start, int amount, int volume, int period){
+       POVForum.render(POVFunc(appl, start,800, 50), form(POVClass.class) )
+    );
+
+    }
 
 
 
@@ -237,6 +371,8 @@ public class Application extends Controller {
           TimePoint marker = new TimePoint(); 
           marker.setTime(testd);
           marker.setprice(s.getDataPoint(x).getprice());
+          marker.setAmountPurchased( indivOrderSize );
+          marker.setValuePurchased( ( indivOrderSize*s.getDataPoint(x).getprice()) );
           
           s.setPurchase(marker);
           
@@ -321,7 +457,7 @@ public class Application extends Controller {
        return ok(                menu.render()            );  }    
 
    public static Result menu2(String s) {
-       return ok(                menu.render()            );  } 
+       return ok(                menuWithStock.render(s)            );  } 
 
    public static Result code() {
       return ok(                code.render()            );  }
@@ -546,6 +682,54 @@ public static Stock VWAPFunc(Stock s, Calendar start, Calendar end){
     return total;
   }
 
+  public static ArrayList<Date> buyTimes(Calendar s, int period) {
+    ArrayList<Date> buyTimes = new ArrayList<Date>();
+
+    Calendar end = Calendar.getInstance();
+    end.set(Calendar.HOUR_OF_DAY, 17);
+    end.set(Calendar.MINUTE, 00);
+    end.set(Calendar.SECOND, 0);
+    end.set(Calendar.MILLISECOND, 0);
+    Date endd = end.getTime();
+
+    Date startd = s.getTime();
+    buyTimes.add(startd);
+    Calendar cal = Calendar.getInstance();
+    cal.setTime(startd);
+    Date d4 = cal.getTime();
+    while (d4.before(endd)) {
+      cal.add(Calendar.MINUTE, period);
+      d4 = cal.getTime();
+      buyTimes.add(d4);
+//      System.out.println("Buy at : " + d4);
+
+    }
+    return buyTimes;
+
+  }
+
+
+  public static Double getPriceAtDateD(Date d, Stock s){
+    Double price = 0.0;
+    for (int x = 0; x < ( s.DataLength()) ; x++){   
+      Date pointDate = s.getDataPoint(x).getTime();
+      if ( d.equals(pointDate)  )
+        price =  s.getDataPoint(x).getprice();
+    } 
+    return price; 
+        
+  }
+  
+public static Double getVolAtDateD(Date d, Stock s){
+    Double price = 0.0;
+    for (int x = 0; x < ( s.DataLength()) ; x++){   
+      Date pointDate = s.getDataPoint(x).getTime();
+      if ( d.equals(pointDate)  )
+        price =  s.getDataPoint(x).getvolume();
+    } 
+    return price; 
+        
+  }
 
 
 
@@ -579,135 +763,6 @@ public static ArrayList<Date> buyTimes(Calendar s, Calendar e, int period){
       return ok("([[1317888000000,372.5101,375,372.2,372.52],[1318607940000,421.94,422,421.8241,422]]); "  );
         } 
  
-
-
-
-
-
-
-
- /**
-   * Returns the page where the form is filled by the Student whose id is passed, or an empty form
-   * if the id is 0.
-   * @param id The id of the Student whose data is to be shown.  0 if an empty form is to be shown.
-   * @return The page containing the form and data.
-   */
-  public static Result getIndex(long id) {
-    StudentFormData studentData = (id == 0) ? new StudentFormData() : models.Student.makeStudentFormData(id);
-    Form<StudentFormData> formData = Form.form(StudentFormData.class).fill(studentData);
-    return ok(index.render(
-      formData,
-      Hobby.makeHobbyMap(studentData),
-      GradeLevel.getNameList(),
-      GradePointAverage.makeGPAMap(studentData),
-      Major.makeMajorMap(studentData)
-    ));
-  }
-
-
-
-  /**
-   * Process a form submission.
-   * First we bind the HTTP POST data to an instance of StudentFormData.
-   * The binding process will invoke the StudentFormData.validate() method.
-   * If errors are found, re-render the page, displaying the error data. 
-   * If errors not found, render the page with the good data. 
-   * @return The index page with the results of validation. 
-   */
-  public static Result postIndex() {
-
-    // Get the submitted form data from the request object, and run validation.
-    Form<StudentFormData> formData = Form.form(StudentFormData.class).bindFromRequest();
-
-    if (formData.hasErrors()) {
-      // Don't call formData.get() when there are errors, pass 'null' to helpers instead. 
-      flash("error", "Please correct errors above.");
-      return badRequest(index.render(formData,
-        Hobby.makeHobbyMap(null), 
-        GradeLevel.getNameList(),
-        GradePointAverage.makeGPAMap(null), 
-        Major.makeMajorMap(null) 
-      ));
-    }
-    else {
-      // Convert the formData into a Student model instance.
-      Student student = Student.makeInstance(formData.get());
-      flash("success", "Student instance created/edited: " + student);
-      return ok(index.render(formData,
-        Hobby.makeHobbyMap(formData.get()),
-        GradeLevel.getNameList(),
-        GradePointAverage.makeGPAMap(formData.get()),
-        Major.makeMajorMap(formData.get())
-      ));
-    }
-  }
-
-/*// EXAMPLE BELOW WORKS WITH MYJAR>JAR ON DESKTOP TO DISPLAY CONSOLE OUTPUT 
-
-
-
-//public static Result upload() {
-
-  //get file from user 
-  MultipartFormData body = request().body().asMultipartFormData();
-  FilePart picture = body.getFile("picture");
-  if (picture != null) {
-    String fileName = picture.getFilename();
-    String contentType = picture.getContentType(); 
-    File jar = picture.getFile();
-    jar.renameTo(new File("C:\\Users\\JG\\Desktop\\Att\\lib", fileName));
-
-
-    try {URLClassLoader classLoader = new URLClassLoader( new URL[]{jar.toURL()} ); 
-
-      
-    try {JarFile jarFile = new JarFile(jar);    
-    
-      //find main declaration in .jar by reading the manifest 
-      Attributes attribs = jarFile.getManifest().getMainAttributes();
-      String mainClass = attribs.getValue("Main-Class");
-
-      
-    try {Class<?> clazz = classLoader.loadClass(mainClass);
-      
-    
-                //return method called "main" 
-    try {       Method main = clazz.getMethod("main", String[].class);
-    
-     
-    try {        main.invoke(null, new Object[]{new String[]{"arg0", "arg1"}});
-
-
-
-
-
-    } catch (IllegalAccessException e) { e.printStackTrace();
-    } catch (IllegalArgumentException e) {e.printStackTrace();
-    } catch (InvocationTargetException e) {e.printStackTrace(); }     
-      
-    } catch (SecurityException e) {e.printStackTrace();   }      
-    } catch (NoSuchMethodException e) {e.printStackTrace();      
-    } catch (ClassNotFoundException e) {e.printStackTrace();}      
-    } catch (IOException e) {e.printStackTrace();}      
-    } catch (MalformedURLException e) { e.printStackTrace();}
-
-
-
-    return ok( uploadConfirm.render()
-      );
-    /*return ok("File uploaded");
- // } else {
-   // flash("error", "Missing file");
-   //  return ok("File Not uploaded");
-    /*return redirect(routes.Application.index());*/    
-//  }*/
-
-
-
-
-//}*/
-
-
 
 
 

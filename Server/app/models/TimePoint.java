@@ -17,6 +17,33 @@ public class TimePoint {
 	private double open ;	
 	private double high;
 	private double low;
+
+		
+private double amountPurchased;
+
+private double valuePurchased;
+
+public double getValuePurchased() {
+	return valuePurchased;
+}
+
+public void setValuePurchased(double d) {
+	this.valuePurchased = d;
+}
+	
+	public double getAmountPurchased() {
+		return amountPurchased;
+	}
+
+	public void setAmountPurchased(double d) {
+		this.amountPurchased = d;
+	}
+	
+
+
+
+
+	
 	public double getHigh() {
 		return high;
 	}
@@ -64,6 +91,13 @@ public class TimePoint {
 	public TimePoint(Date d, double p){
 		this.time = d;
 		this.high = p;
+		
+	}
+
+	public TimePoint(Date d, double p, double v){
+		this.time = d;
+		this.high = p;
+		this.volume= v;
 		
 	}
 

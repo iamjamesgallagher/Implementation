@@ -113,6 +113,89 @@ schedule based algorithms. They do not respond to changes in stock they are moni
 </section>
 
 
+
+
+
+
+<script> 
+
+$(function () {
+
+
+
+   var arClosingData = [ @dataLoop(Stock)
+
+    ];
+
+     var volumeD = [ @dataLoopVol(Stock)
+
+    ];
+
+
+    $('#container').highcharts('StockChart', {
+
+        rangeSelector: {
+            selected: 1
+        },
+
+        title: {
+            text: 'Test Stock Price'
+        },
+
+         yAxis: [{
+                title: {
+                    text: 'OHLC'
+                },
+                height: 200,
+                lineWidth: 2
+            }, {
+                title: {
+                    text: 'Volume'
+                },
+                top: 300,
+                height: 100,
+                offset: 0,
+                lineWidth: 3
+            }],
+
+
+        series: [{
+            name: 'Test',
+            data: arClosingData,
+            id : 'dataseries',
+            tooltip: {
+                valueDecimals: 2
+            }
+        }, 
+
+         
+
+      {
+                type: 'column',
+                name: 'Volume',
+                data: volumeD,
+                yAxis: 1
+            }
+
+
+
+   
+
+
+        ]
+    });
+});
+
+</script>
+
+
+
+
+
+
+
+
+
 <script type="text/javascript">
 
 (function($){ // encapsulate jQuery

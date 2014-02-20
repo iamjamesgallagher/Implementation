@@ -82,8 +82,7 @@ public class Application extends Controller {
       public static class POVClass {
         @Required public  Integer startHour;
         @Required public Integer startMin;
-         @Required public  Integer endHour;
-         @Required public  Integer  endMin;
+         
          @Required public  Integer  volume;
          @Required public  Integer amount;
        
@@ -149,20 +148,7 @@ public class Application extends Controller {
               start.set(Calendar.SECOND,0);
               start.set(Calendar.MILLISECOND,0);        
               Calendar end = Calendar.getInstance();
-
-              int hour ;
-              if (data.endHour < 12){ 
-                hour= (data.endHour +12);
-              } else {hour =data.endHour;}
-
-              end.set(Calendar.HOUR_OF_DAY,hour );
-              end.set(Calendar.MINUTE,data.endMin);
-              end.set(Calendar.SECOND,0);
-              end.set(Calendar.MILLISECOND,0);
               int i = data.volume ;
-             
-              
-          
             return ok(
                   //Stock s, Calendar start, int amount, int volume, int period){
                 POVResults.render(  POVFunc(  appl,start,data.amount, data.volume )  , form(POVClass.class) ,  i  )
@@ -526,11 +512,11 @@ public static Result upload() {
       nativeStock.setTimeandprice(ts);    
     } 
     
-    Calendar start = Calendar.getInstance();    start.set(Calendar.HOUR_OF_DAY,9);
-    start.set(Calendar.MINUTE,30);    start.set(Calendar.SECOND,0);
+    Calendar start = Calendar.getInstance();    start.set(Calendar.HOUR_OF_DAY,10);
+    start.set(Calendar.MINUTE,00);    start.set(Calendar.SECOND,0);
     start.set(Calendar.MILLISECOND,0);        
-    Calendar end = Calendar.getInstance();    end.set(Calendar.HOUR_OF_DAY,9);             
-    end.set(Calendar.MINUTE,38);    end.set(Calendar.SECOND,0);
+    Calendar end = Calendar.getInstance();    end.set(Calendar.HOUR_OF_DAY,13);             
+    end.set(Calendar.MINUTE,00);    end.set(Calendar.SECOND,0);
     end.set(Calendar.MILLISECOND,0);
             
     // Call And Run ALgorithm. 
@@ -541,7 +527,7 @@ public static Result upload() {
       
     Method set = stockObject.getClass().getMethod("TWAPFunc",alg);  
     System.out.println( "check is twap func "+ set.toString() );
-    System.out.println( "This should be a stock " +  set.invoke( stockObject,start,end,100000,2 )) ;
+    System.out.println( "This should be a stock " +  set.invoke( stockObject,start,end,100000,30 )) ;
 
     //Create Native Stock with Jar Stocks Values
 

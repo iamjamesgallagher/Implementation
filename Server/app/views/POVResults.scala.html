@@ -1,23 +1,16 @@
-@(Stock: Stock, POVForum: Form[Application.POVClass], percent: Integer)
+@(Stock: Stock, POVForum: Form[Application.POVClass], percent: Integer, amount: Integer , startPrice:Double,single2:Integer , startMarker: Double,endMarker:Double, alg_operating_min :Integer , multii :Integer ,diff:Double)
 
 
 @import helper._
 
-
 @main("Index") {
-
 
 <script src="http://code.highcharts.com/stock/highstock.js"></script>
 <script src="http://code.highcharts.com/stock/modules/exporting.js"></script>
 
-<section>
-
-<h1>Percentage of Volume Algorithm . </h1>  
-
-</section>
+<section><h1>Percentage of Volume Algorithm . </h1>  </section>
 
  <section class="content">
-
 
 
 <p>The Time Weighted Average Price Algorithm is a natural extension of early order-slicing based trading strategies. By splitting larger orders into smaller, multiple child orders, traders try and reduce the effect that buying a stock will have on the stocks price.</p>
@@ -27,35 +20,28 @@
 <p> The average price based algorithm , namely TWAP and VWAP represent the first generation of impact-driven algorithms. These algorithms are 
 schedule based algorithms. They do not respond to changes in stock they are monitorings price or volume . There aim is to completely execute the order within the given timeframe, acoring to the parameters they are given , irrespective of other market conditions</p>
 
-
-
-
-
-
-
  </section>
+  <div id="container" style="height: 500px; min-width: 600px"></div>
+  <section>
 
+<h4>  Zoom in to Study Transaction.  &#8593 </h4>
 
-        <div id="container" style="height: 500px; min-width: 600px"></div>
+<h4>  Hover over for Details.  &#8595 </h4>
 
-         <div id="container2" style="height: 500px; min-width: 600px"></div>
-
-
-
-
-<section>
-
-
+</section>        <div id="container2" style="height: 500px; min-width: 600px"></div><section>
 
 <div>
 
+<h2>Results. </h2>  
 
-<p>Above is price of the stock of ******* for a days trading.   </p>
+<h3> Investment price if all @amount stock were aquired in a single purchase, at $@startPrice a share :  $  @single2 </h3>
 
-<p> Try filling in the feilds below to select an quantity and time frame for which you would like to purchase some of **** stock over. </p>
+<h3> Investment price using the POV Algorithm, to track @percent % of market volume for a period of @alg_operating_min minutes   : £  @multii   </h3>
 
-<p> comparing the one of purcase price of the amount you </p>
+<h3> The Percentage of Volume Algorithm saved you   : £ @diff  </h3>
 
+
+<p> Try using this Algorithm again ? <a  href="/TWAP">[Try Again ] </a> </p>
 
 
 
@@ -63,54 +49,6 @@ schedule based algorithms. They do not respond to changes in stock they are moni
 
 </section>
 
-
-<section>
- @form(action = routes.Application.POVResults, args = 'id -> "POVForum") {
-        
-        @inputText(
-            field = POVForum("startHour"),
-            args = '_label -> "Start Time Hour?", 'placeholder -> "2"
-        )
-        
-        @inputText(
-            field = POVForum("startMin"),
-            args = '_label -> "Start Time Min?", 'size -> 3, 'placeholder -> 10
-        )
-
-           @inputText(
-            field = POVForum("endHour"),
-            args = '_label -> "End Time Hour?", 'placeholder -> "9"
-        )
-        
-        @inputText(
-            field = POVForum("endMin"),
-            args = '_label -> "End Time Min?", 'size -> 3, 'placeholder -> 10
-        )
-
-        @inputText(
-            field = POVForum("volume"),
-            args = '_label -> "Volume benchmark to track : ", 'size -> 3, 'placeholder -> 10
-        )
-
-
-         @inputText(
-            field = POVForum("amount"),
-            args = '_label -> "Amount of shares to purchase?", 'size -> 3, 'placeholder -> 10
-        )
-
-         @inputText(
-            field = POVForum("period"),
-            args = '_label -> "Purchase every ? Mins", 'size -> 3, 'placeholder -> 10
-        )
-       
-        <p class="buttons">
-            <input type="submit">
-        <p>
-        
-    }
- 
-        
-</section>
 
 
 
@@ -139,7 +77,7 @@ $(function () {
         },
 
         title: {
-            text: 'Test Stock Price'
+            text: 'Percentage of Volume Market Tracking'
         },
 
          yAxis: [{
@@ -168,7 +106,25 @@ $(function () {
             }
         }, 
 
-         
+    
+
+     { type : 'flags',
+           data : [ 
+            {
+           x : @startMarker,
+           title : 'Starts ',
+           text : ''}, 
+           {
+           x : @endMarker,
+           title : 'Finished',
+           text : ''}
+           
+
+        ],
+        onSeries : 'dataseries',
+        shape : 'circlepin',
+        width : 16
+      } ,        
 
       {
                 type: 'column',
@@ -201,7 +157,7 @@ $(function () {
 (function($){ // encapsulate jQuery
 
 $(function () {
-        $('#container').highcharts({
+        $('#container2').highcharts({
             chart: {
                 type: 'column'
             },
@@ -214,7 +170,7 @@ $(function () {
             xAxis: {
                 categories: [
                     
-                    @dataLoopTimeOnly(Stock)
+                    
                     
                 ]
             },
@@ -226,8 +182,10 @@ $(function () {
             },
             tooltip: {
                 headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+
                 pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                    '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+                    '<td style="padding:0"><b>{point.y:.1f} </b></td></tr>',
+
                 footerFormat: '</table>',
                 shared: true,
                 useHTML: true

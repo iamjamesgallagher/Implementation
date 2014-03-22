@@ -1,4 +1,4 @@
-@(Stock: Stock, helloForm: Form[Application.Hello])
+@(Stock: Stock, helloForm: Form[Application.Hello] , selection: String )
 
 @import helper._
 
@@ -11,7 +11,7 @@
 
 <section>
 
-<h2>Time Weighted Average Price Algorithm . </h2>  
+<h2>Time Weighted Average Price Algorithm . : Purchasing @selection </h2>  
 
 </section>
 
@@ -61,7 +61,7 @@ schedule based algorithms. They do not respond to changes in stock they are moni
 
 	<section>
 
-@form(action = routes.Application.sayHello, args = 'id -> "helloform") {
+@form(action = routes.Application.sayHello2, args = 'id -> "helloform") {
     @inputText(
         field = helloForm("startHour"),
         args = '_label -> "Start Time Hour?", 'placeholder -> "10"

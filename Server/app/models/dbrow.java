@@ -23,9 +23,20 @@ public class dbrow extends Model {
     @Constraints.Required
     public String name;
 
-    
     @Constraints.Required
-    public String sector;    
+    public String ticker;
+
+     @Constraints.Required
+    public String mkcap; 
+
+    @Constraints.Required
+    public String sector;  
+
+    @Constraints.Required
+    public String dddd;  
+
+
+    
     
     /**
      * Generic query helper for entity STOCK with id Long

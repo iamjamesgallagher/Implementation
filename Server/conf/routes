@@ -22,17 +22,64 @@ GET     /Menu2                          controllers.Application.menu2(stock )
 GET     /menu                            controllers.Application.menu()
 
 GET     /VWAP                            controllers.Application.VWAP()
+
+
+
+
 GET     /TWAP                            controllers.Application.TWAP()
+
+GET     /TWAP2                            controllers.Application.TWAP2(stock)
+
+GET     /hello                      controllers.Application.sayHello()
+
+GET     /hello2                      controllers.Application.sayHello2()
+
+
+
 GET     /POV                            controllers.Application.POV()
 
+GET     /POV2                            controllers.Application.POV2(stock)
+
+
+
+
 GET     /POVResults                            controllers.Application.POVResults()
+
+GET     /POVResults2                            controllers.Application.POVResults2()
+
+
+
+
+
+
+
+
+
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
 GET     /webjars/*file              controllers.WebJarAssets.at(file)
 
-GET     /hello                      controllers.Application.sayHello()
+
+
+GET     /dic                      controllers.Application.dic()
+
+
+
+
+GET     /orderS                      controllers.Application.orderS()
+
+GET   /ImpactD                      controllers.Application.ImpactD()
 
 
 POST  /upload         				 controllers.Application.upload()
 
+GET  /Alg         				 controllers.Application.Alg()
+
+GET  /Stock         				 controllers.Application.Stock()
+
+GET  /Liqu         				 controllers.Application.Liqu()
+
+GET  /Arb         				 controllers.Application.Arb()
+
+GET  /ScheduleD         				 controllers.Application.sch()

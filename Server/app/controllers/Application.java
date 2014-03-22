@@ -70,6 +70,9 @@ import java.text.DecimalFormat; //2 decimals places doubles
 
 public class Application extends Controller {
 
+
+  public static  String currentStock = "";
+
   public static class Hello {
         @Required public  Integer startHour;
         @Required public Integer startMin;
@@ -87,6 +90,26 @@ public class Application extends Controller {
          @Required public  Integer amount;
        
     } 
+
+
+  public static Result Alg() {
+      return ok (Alg.render() );
+        } 
+ 
+
+ public static Result Stock() {
+      return ok (StockDef.render() );
+        } 
+
+
+ public static Result Liqu() {
+      return ok (Liqu.render() );
+        } 
+
+ public static Result Arb() {
+      return ok (Arbitrage.render() );
+        } 
+
 
        public static Result sayHello() {
         Stock appl = data("C:\\Users\\User\\Desktop\\Implementation\\Server\\public\\files\\Test_Data.txt");
@@ -122,16 +145,82 @@ public class Application extends Controller {
                 /* multi += */ System.out.println( "check mult "+ operator.getPurchaseArray().get(q).getValuePurchased()     );
                 multi += operator.getPurchaseArray().get(q).getValuePurchased();
                  }
+                multi= Math.round(multi * 100);
+                multi = multi/100;
 
-          /*DecimalFormat df = new DecimalFormat("####0.00");
-          double d1 = df.format(multi) ;
-          double d2 = df.format(single) ;*/
+                single= Math.round(single * 100);
+                single = single/100;
+
+                double diff = single - multi;
+         
+         		diff= Math.round(diff * 100);
+                diff = diff/100;
+
+               
             return ok(
               
-                TWAP.render(  operator , form(Hello.class) , multi , single  )
+                TWAP.render(  operator , form(Hello.class) , multi , single, diff  )
             );
         }      //else
 }
+
+ public static Result sayHello2() {
+        Stock appl = data("C:\\Users\\User\\Desktop\\Implementation\\Server\\public\\files\\"+currentStock+".txt");
+          Form<Hello> form = form(Hello.class).bindFromRequest();
+        if(form.hasErrors()) {
+          System.out.println("message : "+form.errors());
+          return  TODO ; /*TWAPupload.render(  TWAPFunc(  appl,start, end,data.amount, data.period )     );*/
+        } else {
+          Hello data = form.get();
+         Calendar start = Calendar.getInstance();
+              start.set(Calendar.HOUR_OF_DAY,data.startHour);
+              start.set(Calendar.MINUTE,data.startMin);
+              start.set(Calendar.SECOND,0);
+              start.set(Calendar.MILLISECOND,0);        
+              Calendar end = Calendar.getInstance();
+
+              int hour ;
+              if (data.endHour < 12){ 
+                hour= (data.endHour +12);
+              } else {hour =data.endHour;}
+
+              end.set(Calendar.HOUR_OF_DAY,hour );
+              end.set(Calendar.MINUTE,data.endMin);
+              end.set(Calendar.SECOND,0);
+              end.set(Calendar.MILLISECOND,0);
+
+              //comparison
+              Stock operator = TWAPFunc(  appl,start, end,data.amount, data.period ) ;
+              double single = ( operator.getPurchaseArray().get(0).getprice() *data.amount ) ;
+
+              double multi = 0;
+              for ( int q = 0 ; q < operator.getPurchaseArray().size() ; q ++ ){
+                /* multi += */ System.out.println( "check mult "+ operator.getPurchaseArray().get(q).getValuePurchased()     );
+                multi += operator.getPurchaseArray().get(q).getValuePurchased();
+                 }
+                multi= Math.round(multi * 100);
+                multi = multi/100;
+
+
+
+                single= Math.round(single * 100);
+                single = single/100;
+
+                double diff = single - multi;
+         
+            diff= Math.round(diff * 100);
+                diff = diff/100;
+
+               
+            return ok(
+              
+                TWAP2.render(  operator , form(Hello.class) , multi , single, diff ,currentStock )
+            );
+        }      //else
+}
+
+
+
 
 
        public static Result POVResults() {
@@ -149,9 +238,109 @@ public class Application extends Controller {
               start.set(Calendar.MILLISECOND,0);        
               Calendar end = Calendar.getInstance();
               int i = data.volume ;
+              //comparison
+              Stock operator = POVFunc(  appl,start,data.amount, data.volume );
+              double single = ( operator.getPurchaseArray().get(0).getprice() *data.amount ) ;
+              single= Math.round(single * 100); single = single/100;
+              double multi = 0;
+             for ( int q = 0 ; q < operator.getPurchaseArray().size() ; q ++ ){                 
+                 System.out.println( "check mult "+ operator.getPurchaseArray().get(q).getValuePurchased()     );
+
+                  System.out.println( "Amount BOUGHT "+ operator.getPurchaseArray().get(q).getAmountPurchased()     );
+
+                   System.out.println( "Price : "+ operator.getPurchaseArray().get(q).getprice()     );
+
+                    System.out.println( "   ");
+
+                multi += operator.getPurchaseArray().get(q).getValuePurchased();
+
+                 }
+                 //multi = operator.getPurchaseArray().get(0).getValuePurchased();
+                multi= Math.round(multi * 100);
+                multi = multi/100;
+
+                System.out.println( "test 1 "+multi );
+                multi = multi;
+                System.out.println( "test 2 "+multi );
+                int multii = (int)multi;
+                double diff = single - multi;
+               diff= Math.round(diff * 100);
+                diff = diff/100;
+                //find start and end point market 
+                double startMarker =operator.getPurchaseArray().get(0).getMilTime();
+                int last = (operator.getPurchaseArray().size()-1);
+                double endMarker = operator.getPurchaseArray().get( last).getMilTime();         
+                int alg_operating_min = operator.getPurchaseArray().size() ;
+                int amount = data.amount;
+                double startPrice = operator.getPurchaseArray().get(0).getprice();
+                startPrice= Math.round(startPrice * 100);      startPrice = startPrice/100;
+                int single2 = (int)(data.amount * startPrice);
             return ok(
                   //Stock s, Calendar start, int amount, int volume, int period){
-                POVResults.render(  POVFunc(  appl,start,data.amount, data.volume )  , form(POVClass.class) ,  i  )
+                POVResults.render(  operator  , form(POVClass.class) ,
+                  i, amount,startPrice, single2 , startMarker ,endMarker, alg_operating_min,multii, diff)
+            );
+        }      //else
+}
+
+
+
+       public static Result POVResults2() {
+        Stock appl = data("C:\\Users\\User\\Desktop\\Implementation\\Server\\public\\files\\"+currentStock+".txt");
+          Form<POVClass> form = form(POVClass.class).bindFromRequest();
+        if(form.hasErrors()) {
+          System.out.println("message : "+form.errors());
+          return  TODO ; 
+        } else {
+          POVClass data = form.get();
+         Calendar start = Calendar.getInstance();
+              start.set(Calendar.HOUR_OF_DAY,data.startHour);
+              start.set(Calendar.MINUTE,data.startMin);
+              start.set(Calendar.SECOND,0);
+              start.set(Calendar.MILLISECOND,0);        
+              Calendar end = Calendar.getInstance();
+              int i = data.volume ;
+              //comparison
+              Stock operator = POVFunc(  appl,start,data.amount, data.volume );
+              double single = ( operator.getPurchaseArray().get(0).getprice() *data.amount ) ;
+              single= Math.round(single * 100); single = single/100;
+              double multi = 0;
+             for ( int q = 0 ; q < operator.getPurchaseArray().size() ; q ++ ){                 
+                 System.out.println( "check mult "+ operator.getPurchaseArray().get(q).getValuePurchased()     );
+
+                  System.out.println( "Amount BOUGHT "+ operator.getPurchaseArray().get(q).getAmountPurchased()     );
+
+                   System.out.println( "Price : "+ operator.getPurchaseArray().get(q).getprice()     );
+
+                    System.out.println( "   ");
+
+                multi += operator.getPurchaseArray().get(q).getValuePurchased();
+
+                 }
+                 //multi = operator.getPurchaseArray().get(0).getValuePurchased();
+                multi= Math.round(multi * 100);
+                multi = multi/100;
+
+                System.out.println( "test 1 "+multi );
+                multi = multi;
+                System.out.println( "test 2 "+multi );
+                int multii = (int)multi;
+                double diff = single - multi;
+               diff= Math.round(diff * 100);
+                diff = diff/100;
+                //find start and end point market 
+                double startMarker =operator.getPurchaseArray().get(0).getMilTime();
+                int last = (operator.getPurchaseArray().size()-1);
+                double endMarker = operator.getPurchaseArray().get( last).getMilTime();         
+                int alg_operating_min = operator.getPurchaseArray().size() ;
+                int amount = data.amount;
+                double startPrice = operator.getPurchaseArray().get(0).getprice();
+                startPrice= Math.round(startPrice * 100);      startPrice = startPrice/100;
+                int single2 = (int)(data.amount * startPrice);
+            return ok(
+                  //Stock s, Calendar start, int amount, int volume, int period){
+                POVResults.render(  operator  , form(POVClass.class) ,
+                  i, amount,startPrice, single2 , startMarker ,endMarker, alg_operating_min,multii, diff)
             );
         }      //else
 }
@@ -182,6 +371,60 @@ public class Application extends Controller {
 
     }
 
+  public static Result TWAP2(String stock) {
+
+    currentStock = stock;
+
+    Calendar start = Calendar.getInstance();
+    start.set(Calendar.HOUR_OF_DAY,10);
+    start.set(Calendar.MINUTE,30);
+    start.set(Calendar.SECOND,0);
+    start.set(Calendar.MILLISECOND,0);        
+    Calendar end = Calendar.getInstance();
+    end.set(Calendar.HOUR_OF_DAY,14);
+    end.set(Calendar.MINUTE,30);
+    end.set(Calendar.SECOND,0);
+    end.set(Calendar.MILLISECOND,0);
+
+    Stock appl = data("C:\\Users\\User\\Desktop\\Implementation\\Server\\public\\files\\"+stock+".txt");
+
+    /*ArrayList buytime= buyTimes(start, end,30);*/
+
+    return ok(
+       TWAPnodatapoints2.render(TWAPFunc(appl, start, end,800, 30), form(Hello.class), stock)
+    );
+
+    }
+
+
+
+
+
+
+
+
+
+  public static Result orderS() { 
+    return ok(
+       OrderSlice.render()
+    );
+    }
+
+
+ public static Result dic() {
+    return ok(
+       dic.render()
+    );
+
+    }
+
+
+ public static Result ImpactD() {
+    return ok(
+       ImpactD.render()
+    );
+
+    }
 
 
   //completes as soon as market volume allows
@@ -211,12 +454,13 @@ public class Application extends Controller {
           marker.setMilTime(d.getTime() );
           marker.setprice(price);
           marker.setAmountPurchased( purchaseForPeriod );
-          marker.setValuePurchased( ( purchaseForPeriod* periodVolume) );
+          marker.setValuePurchased( ( purchaseForPeriod* price) );
           marker.setvolume( periodVolume);
           s.setPurchase(marker);
 
       System.out.println( "Purchased :"+purchaseForPeriod +", at "+buytime.get(y)+ ", for " +s.getDataPoint(y).getprice());   
       System.out.println( " "); 
+       System.out.println( " INside First If "); 
 
       }
       else {
@@ -234,13 +478,14 @@ public class Application extends Controller {
           marker.setMilTime(d.getTime() );
           marker.setprice(price);
           marker.setAmountPurchased( purchaseForPeriod );
-          marker.setValuePurchased( ( purchaseForPeriod* periodVolume) );
+          marker.setValuePurchased( ( purchaseForPeriod* price) );
           marker.setvolume( periodVolume);
           s.setPurchase(marker);
 
         
         System.out.println( "Purchased :"+purchaseForPeriod +", at "+buytime.get(y)+ ", for " +s.getDataPoint(y).getprice());   
         System.out.println( " "); 
+         System.out.println( "Inside Second If  "); 
         }
       }
     } 
@@ -280,6 +525,32 @@ public class Application extends Controller {
     }
 
 
+  public static Result POV2(String stock) {
+
+    currentStock = stock;
+
+    Calendar start = Calendar.getInstance();
+    start.set(Calendar.HOUR_OF_DAY,10);
+    start.set(Calendar.MINUTE,30);
+    start.set(Calendar.SECOND,0);
+    start.set(Calendar.MILLISECOND,0);        
+    Calendar end = Calendar.getInstance();
+    end.set(Calendar.HOUR_OF_DAY,14);
+    end.set(Calendar.MINUTE,30);
+    end.set(Calendar.SECOND,0);
+    end.set(Calendar.MILLISECOND,0);
+
+    Stock appl = data("C:\\Users\\User\\Desktop\\Implementation\\Server\\public\\files\\"+stock+".txt");
+
+    /*ArrayList buytime= buyTimes(start, end,30);*/
+
+    return ok(
+
+      // POVFunc(Stock s, Calendar start, int amount, int volume, int period){
+       POVForum2.render(POVFunc(appl, start,800, 50), form(POVClass.class) , stock)
+    );
+
+    }
 
 
 
@@ -308,8 +579,10 @@ public class Application extends Controller {
       while (fileIn.hasNextLine() == true){            
       //COLUMNS=DATE,CLOSE,HIGH,LOW,OPEN,VOLUME System.out.println(fileIn.nextLine());      
         String singleLine = fileIn.nextLine();     String[] lineArray = singleLine.split(",");
-        Float price = Float.parseFloat(lineArray[2]);  Float volume = Float.parseFloat(lineArray[5]);      
-        Float high = Float.parseFloat(lineArray[2]);  Float open = Float.parseFloat(lineArray[4]);
+        Float price = Float.parseFloat(lineArray[2]); 
+         Float volume = Float.parseFloat(lineArray[5]);      
+        Float high = Float.parseFloat(lineArray[2]); 
+         Float open = Float.parseFloat(lineArray[4]);
         Float low = Float.parseFloat(lineArray[3]);  Float close = Float.parseFloat(lineArray[1]);
 
         Date myDate = cal.getTime();  
@@ -450,6 +723,9 @@ public class Application extends Controller {
  
    public static Result fileUpload() {
       return ok(      		fileUpload.render()           );  }
+
+    public static Result sch() {
+      return ok(          ScheduleD.render()           );  }
 
 
 public static Result upload() {
@@ -749,10 +1025,6 @@ public static ArrayList<Date> buyTimes(Calendar s, Calendar e, int period){
       return ok("([[1317888000000,372.5101,375,372.2,372.52],[1318607940000,421.94,422,421.8241,422]]); "  );
         } 
  
-
-
-
-
 
 
 

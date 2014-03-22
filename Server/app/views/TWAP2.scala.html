@@ -1,4 +1,4 @@
-@(Stock: Stock, helloForm: Form[Application.Hello])
+@(Stock: Stock, helloForm: Form[Application.Hello], multi: Double, single:Double,diff:Double, selection: String )
 
 @import helper._
 
@@ -11,11 +11,13 @@
 
 <section>
 
-<h2>Time Weighted Average Price Algorithm . </h2>  
+<h2>Time Weighted Average Price Algorithm . : Purchasing @selection </h2>  
 
 </section>
 
  <section class="content">
+
+
 
 
 <p>The Time Weighted Average Price Algorithm is a natural extension of early<a  href="/orderS"> Order Slicing</a> based trading strategies.</p>
@@ -25,12 +27,21 @@
 <p> The average price based algorithm , namely TWAP and VWAP represent the first generation of impact-driven algorithms. These algorithms are 
 schedule based algorithms. They do not respond to changes in stock they are monitorings price or volume . There aim is to completely execute the order within the given timeframe, acoring to the parameters they are given , irrespective of other market conditions</p>
 
+
  The benchmark that T.W.A.P algorithm follows is a time schedule from the start of the days trading .
 
 
 
 
+
  </section>
+
+
+ <h4> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Hover over for Details.   &#8595  </h4>
+
+
+
+
 
 
         <div id="container" style="height: 500px; min-width: 600px"></div>
@@ -40,17 +51,22 @@ schedule based algorithms. They do not respond to changes in stock they are moni
 
 <section>
 
-
+<h4> Zoom in to Study Transaction.  &#8593 </h4>
 
 <div>
 
 
-<h3>
 
-<p> Try filling in the feilds below, to see the T.W.A.P algorithm in action : </p>
+<h2>Results. </h2>  
 
-</h3>
+<h3> Purchase price if aquired on a one off purchase : £  @single </h3>
 
+<h3> Purchase price using TWAP Algorithm  : £  @multi    </h3>
+
+<h3> The T.W.A.P Algorithm saved you   : £  @diff    </h3>
+
+
+<p> Try using this Algorithm again ? <a  href="/TWAP">[Try Again ] </a> </p>
 
 
 </div>
@@ -59,79 +75,23 @@ schedule based algorithms. They do not respond to changes in stock they are moni
 
 
 
-	<section>
-
-@form(action = routes.Application.sayHello, args = 'id -> "helloform") {
-    @inputText(
-        field = helloForm("startHour"),
-        args = '_label -> "Start Time Hour?", 'placeholder -> "10"
-    )
-        
-        @inputText(
-            field = helloForm("startMin"),
-            args = '_label -> "Start Time Minutes?", 'size -> 3, 'placeholder -> 30
-        )
-
-           @inputText(
-            field = helloForm("endHour"),
-            args = '_label -> "End Time Hour?", 'placeholder -> "3"
-        )
-        
-        @inputText(
-            field = helloForm("endMin"),
-            args = '_label -> "End Time Minutes?", 'size -> 3, 'placeholder -> 00
-        )
-
-         @inputText(
-            field = helloForm("amount"),
-            args = '_label -> "Amount of shares to purchase?", 'size -> 3, 'placeholder -> 1000
-        )
-
-         @inputText(
-            field = helloForm("period"),
-            args = '_label -> "Purchase every ? Minutes", 'size -> 3, 'placeholder -> 45
-        )
-        
-        <p class="buttons"> 
-            <input type="submit">
-        <p>
-        
-    }
- 
-        
-</section>
 
 
 
 
 <script> 
-
 $(function () {
-
-
-
-   var arClosingData = [ @dataLoop(Stock)
-
-    ];
-
-     var volumeD = [ @dataLoopVol(Stock)
-
-    ];
-
+   var arClosingData = [ @dataLoop(Stock)     ];
+   var volumeD = [ @dataLoopVol(Stock)     ];
 
     $('#container').highcharts('StockChart', {
+        rangeSelector: { selected: 1    },
 
-        rangeSelector: {
-            selected: 1
-        },
-
-       title: {
-            text: 'TWAP Algorithm'
-        },
+        title: {  text: 'TWAP Algorithm'   },
 
          yAxis: [{
                 title: {
-                    text: 'Price'
+                    text: 'OHLC'
                 },
                 height: 200,
                 lineWidth: 2
@@ -153,7 +113,16 @@ $(function () {
             tooltip: {
                 valueDecimals: 2
             }
-        },{
+        },  { type : 'flags',
+           data : [ 
+           @DP(Stock)
+           
+
+        ],
+        onSeries : 'dataseries',
+        shape : 'circlepin',
+        width : 16
+      },{
                 type: 'column',
                 name: 'Volume',
                 data: volumeD,
@@ -170,8 +139,6 @@ $(function () {
 });
 
 </script>
-
-
 
 <style type="text/css">
 

@@ -1,4 +1,4 @@
-@(Stock: Stock, helloForm: Form[Application.Hello], multi: Double, single:Double)
+@(Stock: Stock, helloForm: Form[Application.Hello], multi: Double, single:Double,diff:Double)
 
 @import helper._
 
@@ -19,20 +19,30 @@
 
 
 
-<p>The Time Weighted Average Price Algorithm is a natural extension of early order-slicing based trading strategies. By splitting larger orders into smaller, multiple child orders,   traders try and reduce the effect that buying a stock will have on the stocks price.</p>
 
- Remember :  <p> Buying a large quantity of one stock will increase the demand it , and subsequently push up the price. </p>
+<p>The Time Weighted Average Price Algorithm is a natural extension of early<a  href="/orderS"> Order Slicing</a> based trading strategies.</p>
+
+<p>The Time Weighted Average Price Algorithm  belongs to the family of <a  href="/ImpactD"> Impact Driven</a>  Trading Algorithms</p>
 
 <p> The average price based algorithm , namely TWAP and VWAP represent the first generation of impact-driven algorithms. These algorithms are 
 schedule based algorithms. They do not respond to changes in stock they are monitorings price or volume . There aim is to completely execute the order within the given timeframe, acoring to the parameters they are given , irrespective of other market conditions</p>
 
 
+ The benchmark that T.W.A.P algorithm follows is a time schedule from the start of the days trading .
 
 
 
 
 
  </section>
+
+
+ <h4> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Hover over for Details.   &#8595  </h4>
+
+
+
+
+
 
         <div id="container" style="height: 500px; min-width: 600px"></div>
 
@@ -41,7 +51,7 @@ schedule based algorithms. They do not respond to changes in stock they are moni
 
 <section>
 
-
+<h4> Zoom in to Study Transaction.  &#8593 </h4>
 
 <div>
 
@@ -49,13 +59,14 @@ schedule based algorithms. They do not respond to changes in stock they are moni
 
 <h2>Results. </h2>  
 
-<h3> Purchase price if aquired on a one off purchase :   @single </h3>
+<h3> Purchase price if aquired on a one off purchase : £  @single </h3>
 
-<h3> Purchase price using TWAP Algorithm  :   @multi    </h3>
+<h3> Purchase price using TWAP Algorithm  : £  @multi    </h3>
+
+<h3> The T.W.A.P Algorithm saved you   : £  @diff    </h3>
 
 
-<p> The average price based algorithm , namely TWAP and VWAP represent the first generation of impact-driven algorithms. These algorithms are 
-schedule based algorithms. They do not respond to changes in stock they are monitorings price or volume . There aim is to completely execute the order within the given timeframe, acoring to the parameters they are given , irrespective of other market conditions</p>
+<p> Try using this Algorithm again ? <a  href="/TWAP">[Try Again ] </a> </p>
 
 
 </div>
@@ -69,29 +80,14 @@ schedule based algorithms. They do not respond to changes in stock they are moni
 
 
 <script> 
-
 $(function () {
-
-
-
-   var arClosingData = [ @dataLoop(Stock)
-
-    ];
-
-     var volumeD = [ @dataLoopVol(Stock)
-
-    ];
-
+   var arClosingData = [ @dataLoop(Stock)     ];
+   var volumeD = [ @dataLoopVol(Stock)     ];
 
     $('#container').highcharts('StockChart', {
+        rangeSelector: { selected: 1    },
 
-        rangeSelector: {
-            selected: 1
-        },
-
-        title: {
-            text: 'Test Stock Price'
-        },
+        title: {  text: 'TWAP Algorithm'   },
 
          yAxis: [{
                 title: {

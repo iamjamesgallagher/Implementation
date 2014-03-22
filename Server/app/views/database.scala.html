@@ -5,6 +5,64 @@
 @( list: java.util.ArrayList[dbrow] )
 
 
+<head>
+    <title>Algorithmic Trading Tutor</title>
+    <!-- <link rel="stylesheet" media="screen" href="@routes.WebJarAssets.at(WebJarAssets.locate("bootstrap.min.css"))"> -->
+    <!-- <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")"> -->
+    <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("dist/css/bootstrap.min.css")">
+
+
+<script src="https://code.jquery.com/jquery.js"></script>
+
+<script src="@routes.Assets.at("dist/js/bootstrap.js")"></script>
+
+  <script src="@routes.Assets.at("javascripts/jquery.min.js")" type="text/javascript"></script>
+ <script src="@routes.Assets.at("javascripts/highstock.js")" type="text/javascript"></script>
+
+  </head>
+  <body>
+  <div class="navbar navbar-inverse" role="navigation">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+          <!--  Display three horizontal lines when navbar collapsed. -->
+          <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="/">Algorithmic Trading Tutor</a>
+        <a class="navbar-brand" href="/menu">Menu</a>
+        <a class="navbar-brand" href="/database">Stocks</a>
+        
+        <a class="navbar-brand" href="/code">Code</a>
+        
+        <a class="navbar-brand" href="/fileUpload">Upload</a>
+        
+        
+         <a class="navbar-brand" href="/dic">Dictionary</a>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <html>
 
@@ -15,8 +73,8 @@
             
             <div class="card" id="right"> <a  href="/database">
                <div class="card-image image2"></div>  </a>
-                <h1>Pick a Stock</h1>
-                <p>Select a company of interest from one on the sites database.</p>
+                <h3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Step 1. : Pick a Stock of Interest.</h3>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Select a company of interest from one on the sites database.</p>
             </div>
 
    
@@ -28,9 +86,10 @@
 
    	<thead>
 		<tr>
-			<th>Stock</th>
-			<th>High</th>
-			<th>Low</th>
+			<th>Company</th>
+      <th>Ticker</th>
+			<th>Market Capitalization</th>
+			<th>Business Sector</th>
 			<th>Date</th>
 			<!-- <th>Sector</th> -->
 			<!-- <th>Platform(s)</th>
@@ -38,6 +97,8 @@
 			<th>CSS grade</th> -->
 		</tr>
 	</thead>
+
+
 
 
    <tbody>
@@ -50,10 +111,12 @@
    
    <td> <a class="navbar-brand" href="/Menu2?stock=@list.get(p).name"> @list.get(p).name   </a> </td> 
    <!-- <td><a href="@routes.Application.menu2("""@list.get(p).name""")"> Button </a>     @list.get(p).sector</td> -->
-   <td> @list.get(p).name</td> 
-   <td> @list.get(p).sector</td>
-   <td> @list.get(p).name</td> 
    
+   <td> @list.get(p).ticker</td>
+  
+   <td> @list.get(p).mkcap</td> 
+    <td> @list.get(p).sector</td> 
+    <td> @list.get(p).dddd</td> 
 	</tr>
 
   

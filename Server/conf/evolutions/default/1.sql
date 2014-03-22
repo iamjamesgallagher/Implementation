@@ -4,8 +4,15 @@
 
 create table dbrow (
   id                        bigint not null,
-  name                      varchar(255),   
+  name                      varchar(255),
+  ticker                      varchar(255),
+   mkcap                      varchar(255),   
  sector						 varchar(255),
+ dddd						 varchar(255),
+
+
+
+
 	 
   constraint pk_dbrow primary key (id))
 ;

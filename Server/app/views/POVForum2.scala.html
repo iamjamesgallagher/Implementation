@@ -1,4 +1,4 @@
-@(Stock: Stock, POVForum: Form[Application.POVClass])
+@(Stock: Stock, POVForum: Form[Application.POVClass], selection: String )
 
 @import helper._
 
@@ -11,7 +11,7 @@
 
 <section>
 
-<h1>Percentage of Volume Algorithm.</h1>  
+<h1>Percentage of Volume Algorithm . : Purchasing @selection </h1>  
 
 </section>
 
@@ -19,12 +19,12 @@
 
 
 
-
 <p>Percentage of Volume Algorithms "go along" with the market voulme ; hence they are sometimes called participation, or target participation algorithms . 
 
  The P.OV algorithm is a natural extension of early "Market follow" based trading strategies. The algorithms belongs to the family of <a  href="/ImpactD"> Impact Driven</a> Algorithms . </p>
 
-<p> Unlike other algorithms, like the TWAP, where a trading schedule may be predetermined, for POV algorithms the trading <a  href="/ScheduleD"> schedule</a> is dynamically determined.  The benchmark that P.O.V algorithm follows is : Market Volume . The Algorithm tries to particiate in the market a given rate , in proportion to the market volume. </p>
+<p> Unlike other algorithms, like the TWAP, where a trading schedule may be predetermined, for POV algorithms the trading <a  href="/ScheduleD"> schedule</a>  is dynamically determined.  The benchmark that P.O.V algorithm follows is : Market Volume . The Algorithm tries to particiate in the market a given rate , in proportion to the market volume. </p>
+
 
 
 
@@ -61,7 +61,7 @@
 
 
 <section>
- @form(action = routes.Application.POVResults, args = 'id -> "POVForum") {
+ @form(action = routes.Application.POVResults2(), args = 'id -> "POVForum") {
         
         @inputText(
             field = POVForum("startHour"),
